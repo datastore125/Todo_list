@@ -5,12 +5,18 @@ tasks::tasks()
 	first = "";
 	second = "";
 	third = "";
+	fourth = "";
+	size = 0;
 }
 
 void tasks::command(int argc, char* argv[])
 {
-	int size = argc;
-	ofstream out("todo.txt");
+	size = argc;
+	fstream myFile, specifiedFile;
+	
+	//in order for me to write in the file without deleting the content
+	myFile.open("todo.txt", std::fstream::in | std::fstream::out | std::fstream::ate);
+	
 	//has to have more than two arguments
 	// there is a second part but i dont know what the value should be
 	// if there is no "" then everything after will be taken as an individual argument
@@ -22,44 +28,90 @@ void tasks::command(int argc, char* argv[])
 
 		if (first == "add")
 		{
-			if (size >= 4)
+			add(myFile, argv);
+			myFile.close();
+		}
+
+		if (first == "list")
+		{
+			if (size < 3)
 			{
-				for (int i = 2; i < size; i++)
-					out << argv[i] << ' ';
-			}
+				string description;
+				ifstream in("todo.txt");
+				int i = 1;
+				while (in.good())
+				{
+					if (in.peek() == '\c')
+					{
+						break;
+					}
+					//dont forget ot add and brackets
+					//this is the case for when there is no do command
 
-			//when there is a ""
-			else
+					//***********THERE IS AN INDEX PROBLEM*********
+					//it prints the last description twice -- fix
+					getline(in, description);
+					cout << i << ":[] " << description << endl;
+					i++;
+				}
+			}
+		}
+
+		//PROBLEM:: I cant find a way to create a txt file and then continuously add onto it
+		if (first == "-f")
+		{
+			second = argv[2];
+			ofstream out;
+			//specifiedFile.open(second.c_str(), std::fstream::in | std::fstream::out | std::fstream::ate);
+			third = argv[3];
+
+			if (third == "add")
 			{
-				second = argv[2];
-				out << second << endl;
+				out.open(second.c_str(), std::ofstream::out || ::ofstream::ate);
+				if (size > 5)
+				{
+					for (int i = 4; i < size; i++)
+					{
+						out << argv[i] << ' ';
+					}
+				}
+
+				else
+				{
+					fourth = argv[4];
+					out << fourth;
+				}
+
+				out << endl;
+				out.close();
 			}
+			
 		}
 
-		
-
-
-	
-		/*
-		if (firstCommand == "list")
-		{
-
-
-		}
-
-		if (firstCommand == "add")
-		{
-			// add the task to the list
-		}
-
-		if (firstCommand == "do")
-		{
-			// make the check mark 
-		}
-		*/
+		//for -f use [filename variable name].c_str() 
 	}
 	
 
+}
+
+
+//adds the task description in the file
+void tasks::add(fstream& file, char* argv[])
+{
+	if (size >= 4)
+	{
+		for (int i = 2; i < size; i++)
+		{
+			file << argv[i] << ' ';
+		}
+	}
+		//when there is a ""
+	else
+	{
+		second = argv[2];
+		file << second;
+	}
+	file << endl;
 }
 
 void tasks::print()

@@ -7,10 +7,8 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-
 	tasks me;
 	me.command(argc, argv);
-	//me.print();
 	
 	return 0;
 }
