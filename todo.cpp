@@ -9,31 +9,37 @@ tasks::tasks()
 
 void tasks::command(int argc, char* argv[])
 {
-	//has to have more than 
-	if (argc >= 2 || argc <= 5)
+	int size = argc;
+	ofstream out("todo.txt");
+	//has to have more than two arguments
+	// there is a second part but i dont know what the value should be
+	// if there is no "" then everything after will be taken as an individual argument
+	if (size >= 2)
 	{
-		if (argc == 3)
+		
+		//set your first to the command (add, do, list)
+		first = argv[1];
+
+		if (first == "add")
 		{
-			//set your first 
-			first = argv[1];
-
-			if (first == "add")
+			if (size >= 4)
 			{
+				for (int i = 2; i < size; i++)
+					out << argv[i] << ' ';
+			}
 
-				string description;
-				ifstream in(second);
-				ofstream out("todo.txt");
-
-				while (!in.eof())
-				{
-					getline(in, description);
-					out << description << endl;
-				}
+			//when there is a ""
+			else
+			{
+				second = argv[2];
+				out << second << endl;
+			}
 		}
+
 		
 
 
-		}
+	
 		/*
 		if (firstCommand == "list")
 		{
