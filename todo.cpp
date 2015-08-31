@@ -7,29 +7,60 @@ tasks::tasks()
 	third = "";
 	fourth = "";
 	size = 0;
+	iterator = 1;
 }
 
 void tasks::command(int argc, char* argv[])
 {
 	size = argc;
 	fstream myFile, specifiedFile;
-	
+
 	//in order for me to write in the file without deleting the content
-	myFile.open("todo.txt", std::fstream::in | std::fstream::out | std::fstream::ate);
-	
+	//myFile.open("todo.txt", std::fstream::in | std::fstream::out | std::fstream::ate);
+
+
 	//has to have more than two arguments
 	// there is a second part but i dont know what the value should be
 	// if there is no "" then everything after will be taken as an individual argument
 	if (size >= 2)
 	{
-		
+
 		//set your first to the command (add, do, list)
 		first = argv[1];
 
 		if (first == "add")
 		{
-			add(myFile, argv);
-			myFile.close();
+			string description;
+			ifstream hope;
+			hope.open("todo.txt");
+			if (hope.is_open())
+			{
+				ofstream temp;
+				temp.open("temp.txt");
+			
+				while (getline(hope, description))
+				{
+					temp << description << endl;
+					iterator++;
+				}
+				add(temp, argv);
+
+				temp.close();
+				hope.close();
+				remove("todo.txt");
+				rename("temp.txt", "todo.txt");
+
+			}
+
+			else
+			{
+				ofstream newTemp;
+				newTemp.open("temporary.txt");
+				add(newTemp, argv);
+				newTemp.close();
+				rename("temporary.txt", "todo.txt");
+			}
+			
 		}
 
 		if (first == "list")
@@ -85,19 +116,20 @@ void tasks::command(int argc, char* argv[])
 				out << endl;
 				out.close();
 			}
-			
+
 		}
 
 		//for -f use [filename variable name].c_str() 
 	}
-	
+
 
 }
 
 
 //adds the task description in the file
-void tasks::add(fstream& file, char* argv[])
+void tasks::add(ofstream& file, char* argv[])
 {
+
 	if (size >= 4)
 	{
 		for (int i = 2; i < size; i++)
@@ -105,7 +137,7 @@ void tasks::add(fstream& file, char* argv[])
 			file << argv[i] << ' ';
 		}
 	}
-		//when there is a ""
+	//when there is a ""
 	else
 	{
 		second = argv[2];
