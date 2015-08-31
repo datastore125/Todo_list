@@ -32,7 +32,7 @@ void tasks::command(int argc, char* argv[])
 			{
 				ofstream temp;
 				temp.open("temp.txt");
-			
+
 				while (getline(hope, description))
 				{
 					temp << description << endl;
@@ -66,7 +66,7 @@ void tasks::command(int argc, char* argv[])
 			}
 			last.close();
 		}
-
+////////////////////////////////////////////
 		if (first == "list")
 		{
 
@@ -84,11 +84,10 @@ void tasks::command(int argc, char* argv[])
 				{
 					cout << *iter << endl;
 				}
-				
 			}
 		}
-
-		//PROBLEM:: I cant find a way to create a txt file and then continuously add onto it
+//////////////////////////////////////////////
+		
 		if (first == "-f")
 		{
 			second = argv[2];
