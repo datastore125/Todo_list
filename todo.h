@@ -11,6 +11,7 @@ public:
 	void command(int argc, char* argv[]);
 	void add(ofstream& file, char* argv[], vector<string>& temp);
 	bool doneOrNot();
+	void vectorTasks(vector<string>& temp1, ifstream& file, int Tnumber);
 private:
 	string first, second, third, fourth;
 	int size;

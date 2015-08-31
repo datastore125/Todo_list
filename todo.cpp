@@ -13,11 +13,6 @@ tasks::tasks()
 void tasks::command(int argc, char* argv[])
 {
 	size = argc;
-	fstream myFile, specifiedFile;
-
-	//in order for me to write in the file without deleting the content
-	//myFile.open("todo.txt", std::fstream::in | std::fstream::out | std::fstream::ate);
-
 
 	//has to have more than two arguments
 	// there is a second part but i dont know what the value should be
@@ -67,36 +62,29 @@ void tasks::command(int argc, char* argv[])
 			for (iter = tasklists.begin(); iter != tasklists.end(); iter++)
 			{
 				iterator++;
-				last << iterator << ":[] " << *iter << endl;
+				last << iterator << ":[ ] " << *iter << endl;
 			}
 			last.close();
-			
-
-			
 		}
 
 		if (first == "list")
 		{
+
+			ifstream listTasks;
+			listTasks.open("todo.txt");
+			string lines;
 			if (size < 3)
 			{
-				string description;
-				ifstream in("todo.txt");
-				int i = 1;
-				while (in.good())
+				while (getline(listTasks, lines))
 				{
-					if (in.peek() == '\c')
-					{
-						break;
-					}
-					//dont forget ot add and brackets
-					//this is the case for when there is no do command
-
-					//***********THERE IS AN INDEX PROBLEM*********
-					//it prints the last description twice -- fix
-					getline(in, description);
-					cout << i << ":[] " << description << endl;
-					i++;
+					tasklists.push_back(lines);
 				}
+
+				for (iter = tasklists.begin(); iter != tasklists.end(); iter++)
+				{
+					cout << *iter << endl;
+				}
+				
 			}
 		}
 
@@ -131,9 +119,56 @@ void tasks::command(int argc, char* argv[])
 
 		}
 
+		if (first == "do")
+		{
+			string taskNumber;
+			taskNumber = argv[2];
+
+			int number = atoi(taskNumber.c_str());
+			ifstream lookIn;
+			lookIn.open("todo.txt");
+
+			vectorTasks(tasklists, lookIn, number);
+
+		}
+
 		//for -f use [filename variable name].c_str() 
+	}//end of if(size >= 2)
+
+	else
+	{
+		cout << "please input the executable plus the command\n";
 	}
 
+
+}
+
+void tasks::vectorTasks(vector<string>& temp1, ifstream& file, int Tnumber)
+{
+	string line,
+		tempLine,
+		xMark = "[x]";
+
+	int counter = 0;
+	while (getline(file, line))
+	{
+		
+		counter++;
+		if (counter == Tnumber)
+		{	
+			
+			tempLine = line;
+			tempLine.replace(2, 3, xMark);
+			break;
+		}
+
+		else
+		{
+			temp1.push_back(line);
+		}
+		
+	}
+	temp1.push_back(tempLine);
 
 }
 
