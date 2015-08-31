@@ -7,7 +7,7 @@ tasks::tasks()
 	third = "";
 	fourth = "";
 	size = 0;
-	iterator = 1;
+	iterator = 0;
 }
 
 void tasks::command(int argc, char* argv[])
@@ -32,7 +32,7 @@ void tasks::command(int argc, char* argv[])
 		{
 			string description;
 			ifstream hope;
-			hope.open("todo.txt");
+			hope.open("todo1.txt");
 			if (hope.is_open())
 			{
 				ofstream temp;
@@ -41,14 +41,14 @@ void tasks::command(int argc, char* argv[])
 				while (getline(hope, description))
 				{
 					temp << description << endl;
-					iterator++;
+					tasklists.push_back(description);
 				}
-				add(temp, argv);
+				add(temp, argv, tasklists);
 
 				temp.close();
 				hope.close();
-				remove("todo.txt");
-				rename("temp.txt", "todo.txt");
+				remove("todo1.txt");
+				rename("temp.txt", "todo1.txt");
 
 			}
 
@@ -56,10 +56,22 @@ void tasks::command(int argc, char* argv[])
 			{
 				ofstream newTemp;
 				newTemp.open("temporary.txt");
-				add(newTemp, argv);
+				add(newTemp, argv, tasklists);
 				newTemp.close();
-				rename("temporary.txt", "todo.txt");
+				rename("temporary.txt", "todo1.txt");
 			}
+
+			ofstream last;
+			last.open("todo.txt");
+
+			for (iter = tasklists.begin(); iter != tasklists.end(); iter++)
+			{
+				iterator++;
+				last << iterator << ":[] " << *iter << endl;
+			}
+			last.close();
+			
+
 			
 		}
 
@@ -127,13 +139,16 @@ void tasks::command(int argc, char* argv[])
 
 
 //adds the task description in the file
-void tasks::add(ofstream& file, char* argv[])
+void tasks::add(ofstream& file, char* argv[], vector<string>& temp)
 {
+	ofstream trash;
+	trash.open("trash.txt");
 
 	if (size >= 4)
 	{
 		for (int i = 2; i < size; i++)
 		{
+			trash << argv[i] << ' ';
 			file << argv[i] << ' ';
 		}
 	}
@@ -142,8 +157,19 @@ void tasks::add(ofstream& file, char* argv[])
 	{
 		second = argv[2];
 		file << second;
+		trash << second;
 	}
 	file << endl;
+	trash.close();
+
+	ifstream takeTrash;
+	takeTrash.open("trash.txt");
+	string myTrash;
+	getline(takeTrash, myTrash);
+	temp.push_back(myTrash);
+	takeTrash.close();
+	remove("trash.txt");
+
 }
 
 void tasks::print()
