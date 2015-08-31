@@ -119,6 +119,8 @@ void tasks::command(int argc, char* argv[])
 
 		}
 
+		/////////////////////////////////////////////////////////////////
+		////MY DO
 		if (first == "do")
 		{
 			string taskNumber;
@@ -126,10 +128,44 @@ void tasks::command(int argc, char* argv[])
 
 			int number = atoi(taskNumber.c_str());
 			ifstream lookIn;
-			lookIn.open("todo.txt");
+			lookIn.open("todo1.txt");
 
+
+			//***********************************
+			//enter into the function
 			vectorTasks(tasklists, lookIn, number);
+			lookIn.close();
 
+			ofstream nowWrite,
+				todoWrite;
+			nowWrite.open("todo1.txt");
+			int tempI = 0;
+
+			for (iter = tasklists.begin(); iter != tasklists.end(); iter++)
+			{
+				nowWrite << *iter << endl;
+			}
+			nowWrite.close();
+			tasklists.clear();
+
+
+			ifstream forTodo;
+			forTodo.open("todo1.txt");
+			string d1;
+			while (getline(forTodo, d1))
+			{
+				tasklists.push_back(d1);
+			}
+			forTodo.close();
+			
+			//THIS IS WHERE I WRITE TO TODO for DO
+			todoWrite.open("todo.txt");
+			for (iter = tasklists.begin(); iter != tasklists.end(); iter++)
+			{	
+				tempI++;
+				todoWrite << tempI << ":" << *iter << endl;
+			}
+			todoWrite.close();
 		}
 
 		//for -f use [filename variable name].c_str() 
@@ -139,33 +175,55 @@ void tasks::command(int argc, char* argv[])
 	{
 		cout << "please input the executable plus the command\n";
 	}
-
-
 }
 
 void tasks::vectorTasks(vector<string>& temp1, ifstream& file, int Tnumber)
 {
 	string line,
 		tempLine,
-		xMark = "[x]";
+		tempLine1,
+		tempLine2,
+		xMark = "[x] ",
+		noMark = "[ ] ",
+		newLine,
+		numToString;
 
 	int counter = 0;
 	while (getline(file, line))
 	{
 		
 		counter++;
-		if (counter == Tnumber)
-		{	
-			
-			tempLine = line;
-			tempLine.replace(2, 3, xMark);
-			break;
+		
+		if (file.peek() == '[')
+		{
+			if (counter == Tnumber)
+			{
+				tempLine = line;
+				tempLine.replace(0, 3, xMark);
+			}
+
+			else
+			{
+				tasklists.push_back(line);
+			}
 		}
 
+		///THIS JUST MEANS ITS THE FIRST TASK
 		else
 		{
-			temp1.push_back(line);
+			if (counter == Tnumber)
+			{
+				tempLine = xMark + line;
+				//tempLine.replace(0, 3, xMark);
+			}
+
+			else
+			{
+				tempLine1 = noMark + line;
+				tasklists.push_back(tempLine1);
+			}
 		}
+		
 		
 	}
 	temp1.push_back(tempLine);
