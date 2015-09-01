@@ -11,11 +11,11 @@ public:
 	tasks();
 	void print();
 	void command(int argc, char* argv[]);
-	void add(ofstream& file, char* argv[], vector<string>& temp);
+	void add(ofstream& file, char* argv[]);
 	bool doneOrNot();
 	void vectorTasks(vector<string>& temp1, ifstream& file, int Tnumber);
 private:
-	string first, second, third, fourth;
+	string first, second, third, fourth, xMark, noMark;
 	int size;
 	int iterator;
 	vector<string> tasklists;
