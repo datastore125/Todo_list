@@ -32,7 +32,6 @@ void tasks::command(int argc, char* argv[])
 			hope.open("todo1.txt"); //todo1.txt is where i'll store/write all the tasks without the index number
 			if (!hope.eof() && hope.is_open()) //if the file exists then it'll open and enter into this statement
 			{
-				cout << "1";
 				bool done = false;
 				int i = 0;
 
@@ -52,12 +51,10 @@ void tasks::command(int argc, char* argv[])
 
 				for (iter = tasklists.begin(); iter != tasklists.end(); iter++) //this is how I go through the vector
 				{
-					cout << "2";
 					//this is to make sure i print the new description before a marked task but at the end of all the 
 					//unmarked
 					if (tasklists.at(i)[1] == 'x' && done == false) //if the char is an 'x' AND if i have not already entered
 					{												//into statement within the same loop.
-						cout << "3";
 						add(temp, argv); //I want to write the new description into the todo1.txt file
 						temp << *iter << endl; //then now I want to write the first [x] marked task in todo1.txt so i dont lose it
 						done = true; //so i dont enter the loop i'll set my done to true.
@@ -66,7 +63,6 @@ void tasks::command(int argc, char* argv[])
 
 					else //if the char is a ' ' or done = true
 					{
-						cout << "4";
 						temp << *iter << endl; //write into the todo.txt file
 						
 					}
@@ -119,6 +115,7 @@ void tasks::command(int argc, char* argv[])
 			
 		}
 ///////////////////////////////////////////////
+///////////////////////////////////////////////
 		if (first == "list")
 		{
 
@@ -138,43 +135,213 @@ void tasks::command(int argc, char* argv[])
 				}
 			}
 		}
-		//////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////////
+///////////////////// -f
 		if (first == "-f")
 		{
 			second = argv[2];
-			ofstream out;
-			//specifiedFile.open(second.c_str(), std::fstream::in | std::fstream::out | std::fstream::ate);
 			third = argv[3];
-
+/////////////////////////////////////
+/////start of add
 			if (third == "add")
 			{
-				out.open(second.c_str(), std::ofstream::out || ::ofstream::ate);
-				if (size > 5)
+				cout << "yes";
+				string description;
+				ifstream hope;
+				hope.open(second.c_str()); //my new file is where i'll use to check whether i'm reading everything
+				if (!hope.eof() && hope.is_open()) //if the file exists then it'll open and enter into this statement
 				{
-					for (int i = 4; i < size; i++)
+					hope.close();
+					cout << "here";
+					ifstream existingTodo1;
+					existingTodo1.open("todo1.txt");
+					bool done = false;
+					int i = 0;
+
+					while (getline(existingTodo1, description)) //since the file exists I want to read everything from the todo1.txt file
 					{
-						out << argv[i] << ' ';
+						tasklists.push_back(description); //everything in the file i'll push_Back into the vector
 					}
+					existingTodo1.close();
+
+					//close my todo1.txt file
+
+					//now that I have everything stored in my vector I want to go ahead and check to see if there is a marked off
+					// bracket. If tehre is an 'x' at char position 1 then I want to make sure to print the description with an 
+					// empty bracket before the content in the vector.
+					ofstream temp;
+					temp.open("todo1.txt");
+
+					for (iter = tasklists.begin(); iter != tasklists.end(); iter++) //this is how I go through the vector
+					{
+						//this is to make sure i print the new description before a marked task but at the end of all the 
+						//unmarked
+						if (tasklists.at(i)[1] == 'x' && done == false) //if the char is an 'x' AND if i have not already entered
+						{												//into statement within the same loop.
+							add(temp, argv); //I want to write the new description into the todo1.txt file
+							temp << *iter << endl; //then now I want to write the first [x] marked task in todo1.txt so i dont lose it
+							done = true; //so i dont enter the loop i'll set my done to true.
+						}
+
+
+						else //if the char is a ' ' or done = true
+						{
+							temp << *iter << endl; //write into the todo.txt file
+						}
+						i++;
+						//problem: how are you going to ensure that when i want to add a new one how am i going to write it in?
+					}//exit once evverything from the vector has been printed
+
+					if (done == false)
+					{
+						add(temp, argv);
+					}
+					temp.close(); //close my todo1.txt file
+					tasklists.clear(); //I clear the vector now since todo1.txt has all the tasks whether marked or not
+					//i also do this so i can now put in the newly aarragned tasks
+				}
+
+				else //I come down here if the file doesn't exist which means that this is a first entry since the file todo1.txt
+				{		//did not open
+					ofstream newTemp;
+					newTemp.open("todo1.txt"); //create your first todo1.txt file.
+					add(newTemp, argv); //enter into add so that now the new task will be written in the todo1.txt file
+					newTemp.close(); //close todo1.txt
+					cout << "1";
+				}
+
+				//by this point i should have a completed todo1.txt file with all the tasks whether first or multiple entries
+
+				ifstream newHope;
+				newHope.open("todo1.txt"); //now I open up my completed todo1.txt file will all the tasks so that i can finally
+				string newString;		//write it into todo.txt
+
+				while (getline(newHope, newString)) //This while loop is used so that i can store all the tasks already in
+				{									//todo1.txt into a vector
+					tasklists.push_back(newString);
+				}
+
+
+				newHope.close(); //i close my todo1.txt because i've copied eveyrthig into a vector and dont need it anymore
+				ofstream temp1;
+				temp1.open(second.c_str()); //now i create a specified file output file
+
+				int i1 = 0; //used to index the tasks
+				for (iter = tasklists.begin(); iter != tasklists.end(); iter++) //i print everything out of the vector.
+				{
+					i1++;
+					temp1 << i1 << ':' << *iter << endl;
+
+				}
+
+				temp1.close(); //then now i close my specified file
+			}
+/////////////end of add
+///////////////////////////
+
+			if (third == "list")
+			{
+				ifstream listTasks;
+				listTasks.open(second.c_str());
+				string lines;
+				if (size < 5)
+				{
+					if (listTasks.is_open() || !listTasks.eof())
+					{
+						while (getline(listTasks, lines))
+						{
+							tasklists.push_back(lines);
+						}
+
+						for (iter = tasklists.begin(); iter != tasklists.end(); iter++)
+						{
+							cout << *iter << endl;
+						}
+					}
+
+					else
+						cout << "file is empty or no file exists";
+				
+				}
+				else
+					cout << "wrong syntax for command";
+			}
+/////////////////// end of list
+///////////////////////////////////////////////////////
+			if (third == "do")
+			{
+				string taskNumber;
+				taskNumber = argv[4];
+
+				ifstream checkFile;
+				checkFile.open(second.c_str());
+				bool check = false;
+
+				if (checkFile.is_open() && !checkFile.eof() && check == false)
+				{
+					check = true; //this means the specifiled file exists
+				}
+
+
+				int number = atoi(taskNumber.c_str());
+				ifstream lookIn;
+				lookIn.open("todo1.txt"); //i'm going to read in my todo1.txt file because it has all of my tasks
+				//write a check to ensure that this is not the first time the file was open
+
+				if ((lookIn.is_open() || lookIn.eof()) && check == true)
+				{
+					//***********************************
+					//enter into the function
+					vectorTasks(tasklists, lookIn, number);
+					lookIn.close();
+
+					ofstream nowWrite,
+						todoWrite;
+					nowWrite.open("todo1.txt"); //by doing this i completely delete everything in todo1.txt
+					int tempI = 0; //i want to do this so i can completely write a new todo1.txt file with all the tasks in order
+
+					for (iter = tasklists.begin(); iter != tasklists.end(); iter++) //i iterate through my vector and print everything to
+					{																//todo1.txt
+						nowWrite << *iter << endl;
+					}
+					//at this point everything in my vector should print to todo1.txt
+					nowWrite.close();
+					tasklists.clear(); //my vector is now empty
+
+
+					ifstream forTodo; //now i open todo1.txt as an ifstream
+					forTodo.open("todo1.txt");
+					string d1;
+					while (getline(forTodo, d1)) //now i store everything in my todo1.txt file into my vector
+					{
+						tasklists.push_back(d1); //i use the string d1 to do so
+					}
+					forTodo.close(); //i close my todo1.txt file
+
+					//THIS IS WHERE I WRITE TO TODO for DO
+					todoWrite.open(second.c_str());
+					for (iter = tasklists.begin(); iter != tasklists.end(); iter++)
+					{
+						tempI++;
+						todoWrite << tempI << ":" << *iter << endl;
+					}
+					todoWrite.close();
 				}
 
 				else
-				{
-					fourth = argv[4];
-					out << fourth;
-				}
+					cout << "the file is empty -- cant do anything";
 
-				out << endl;
-				out.close();
 			}
-
 		}
-
-		/////////////////////////////////////////////////////////////////
-		////MY DO
-		//i just need to impleement my todo1.txt file
+		//end of -f
+//////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+////MY DO
+//i just need to impleement my todo1.txt file
 		if (first == "do")
 		{
+
 			string taskNumber;
 			taskNumber = argv[2];
 
@@ -183,43 +350,49 @@ void tasks::command(int argc, char* argv[])
 			lookIn.open("todo1.txt"); //i'm going to read in my todo1.txt file because it has all of my tasks
 			//write a check to ensure that this is not the first time the file was open
 
-
-			//***********************************
-			//enter into the function
-			vectorTasks(tasklists, lookIn, number);
-			lookIn.close();
-
-			ofstream nowWrite,
-				todoWrite;
-			nowWrite.open("todo1.txt"); //by doing this i completely delete everything in todo1.txt
-			int tempI = 0; //i want to do this so i can completely write a new todo1.txt file with all the tasks in order
-
-			for (iter = tasklists.begin(); iter != tasklists.end(); iter++) //i iterate through my vector and print everything to
-			{																//todo1.txt
-				nowWrite << *iter << endl;
-			}
-			//at this point everything in my vector should print to todo1.txt
-			nowWrite.close();
-			tasklists.clear(); //my vector is now empty
-
-
-			ifstream forTodo; //now i open todo1.txt as an ifstream
-			forTodo.open("todo1.txt");
-			string d1;
-			while (getline(forTodo, d1)) //now i store everything in my todo1.txt file into my vector
+			if (lookIn.is_open() || lookIn.eof())
 			{
-				tasklists.push_back(d1); //i use the string d1 to do so
-			}
-			forTodo.close(); //i close my todo1.txt file
+				//***********************************
+				//enter into the function
+				vectorTasks(tasklists, lookIn, number);
+				lookIn.close();
 
-			//THIS IS WHERE I WRITE TO TODO for DO
-			todoWrite.open("todo.txt");
-			for (iter = tasklists.begin(); iter != tasklists.end(); iter++)
-			{
-				tempI++;
-				todoWrite << tempI << ":" << *iter << endl;
+				ofstream nowWrite,
+					todoWrite;
+				nowWrite.open("todo1.txt"); //by doing this i completely delete everything in todo1.txt
+				int tempI = 0; //i want to do this so i can completely write a new todo1.txt file with all the tasks in order
+
+				for (iter = tasklists.begin(); iter != tasklists.end(); iter++) //i iterate through my vector and print everything to
+				{																//todo1.txt
+					nowWrite << *iter << endl;
+				}
+				//at this point everything in my vector should print to todo1.txt
+				nowWrite.close();
+				tasklists.clear(); //my vector is now empty
+
+
+				ifstream forTodo; //now i open todo1.txt as an ifstream
+				forTodo.open("todo1.txt");
+				string d1;
+				while (getline(forTodo, d1)) //now i store everything in my todo1.txt file into my vector
+				{
+					tasklists.push_back(d1); //i use the string d1 to do so
+				}
+				forTodo.close(); //i close my todo1.txt file
+
+				//THIS IS WHERE I WRITE TO TODO for DO
+				todoWrite.open("todo.txt");
+				for (iter = tasklists.begin(); iter != tasklists.end(); iter++)
+				{
+					tempI++;
+					todoWrite << tempI << ":" << *iter << endl;
+				}
+				todoWrite.close();
 			}
-			todoWrite.close();
+
+			else
+				cout << "the file is empty -- cant do anything";
+			
 		}
 
 		//for -f use [filename variable name].c_str() 
@@ -235,10 +408,7 @@ void tasks::vectorTasks(vector<string>& temp1, ifstream& file, int Tnumber)
 {
 	string line,
 		tempLine,
-		tempLine1,
 		tempLine2,
-		newLine,
-		numToString,
 		xMark = "[x] ",
 		noMark = "[ ] ";
 
@@ -282,20 +452,39 @@ void tasks::add(ofstream& file, char* argv[])
 {
 	ofstream trash;
 	trash.open("trash.txt"); //This is a temp file that i will delete/rename
-								//i use this to store the string and then extract it from the file
+	//i use this to store the string and then extract it from the file
 
-	if (size >= 4) //so if the size is greater than or equal to 4 it means that there is no parantheses  so its just a bunch of
-	{								//arguments after the command since the 3rd would just be the whole parenthases
-		for (int i = 2; i < size; i++)
+	if (first == "-f")
+	{
+		cout << "in -f";
+		if (size > 5)
 		{
-			trash << argv[i] << ' '; //my method of printing everything out into the trash.txt file
+			for (int i = 4; i < size; i++)
+				trash << argv[i] << ' ';
+		}
+
+		else
+		{
+			fourth = argv[4];
+			trash << fourth;
 		}
 	}
-	//when there is a "parentehese"
+
 	else
 	{
-		second = argv[2];
-		trash << second; //write it into my trash.txt
+		if (size >= 4) //so if the size is greater than or equal to 4 it means that there is no parantheses  so its just a bunch of
+		{								//arguments after the command since the 3rd would just be the whole parenthases
+			for (int i = 2; i < size; i++)
+			{
+				trash << argv[i] << ' '; //my method of printing everything out into the trash.txt file
+			}
+		}
+		//when there is a "parentehese"
+		else
+		{
+			second = argv[2];
+			trash << second; //write it into my trash.txt
+		}
 	}
 	trash.close(); //close my trash file
 
