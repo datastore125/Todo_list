@@ -39,15 +39,15 @@ void tasks::command(int argc, char* argv[])
 				{
 					count++;
 
-					if (count > 0 && count < 100)
+					if (count > 9 && count < 100)
 					{
-						newText.replace(0, 2, "");
+						newText.replace(0, 3, "");
 						replace << newText << endl;
 					}
 					
 					else
 					{
-						newText.replace(0, 1, "");
+						newText.replace(0, 2, "");
 						replace << newText << endl;
 					}
 				}
@@ -65,10 +65,10 @@ void tasks::command(int argc, char* argv[])
 
 				while (getline(hope, description)) //since the file exists I want to read everything from the todo1.txt file
 				{
-					tasklists.push_back(description); //everything in the file i'll push_Back into the vector
+						tasklists.push_back(description); //everything in the file i'll push_Back into the vector
 				}
 				hope.close();
-
+				i = 0; ///re-initialize to 0
 				//close my hope file
 					
 				//now that I have everything stored in my vector I want to go ahead and check to see if there is a marked off
@@ -76,7 +76,7 @@ void tasks::command(int argc, char* argv[])
 				// empty bracket before the content in the vector.
 				ofstream temp;
 				temp.open("todo1.txt");
-
+				int counter = 0;
 				for (iter = tasklists.begin(); iter != tasklists.end(); iter++) //this is how I go through the vector
 				{
 					//this is to make sure i print the new description before a marked task but at the end of all the 
@@ -95,7 +95,6 @@ void tasks::command(int argc, char* argv[])
 						
 					}
 					i++;
-					//problem: how are you going to ensure that when i want to add a new one how am i going to write it in?
 				}//exit once evverything from the vector has been printed
 
 				if (done == false)
@@ -124,7 +123,6 @@ void tasks::command(int argc, char* argv[])
 			while (getline(newHope, newString)) //This while loop is used so that i can store all the tasks already in
 			{									//todo1.txt into a vector
 				tasklists.push_back(newString);
-				
 			}	
 
 			newHope.close(); //i close my todo1.txt because i've copied eveyrthig into a vector and dont need it anymore
@@ -187,16 +185,15 @@ void tasks::command(int argc, char* argv[])
 					while (getline(hope, replaceString)) //i'm doint his check because there may be an instance where
 					{									//the specified file already exists but the todo1.txt file may
 						count++;						//have been modified
-						cout << "where am i?";
-						if (count > 0 && count < 100)
+						if (count > 9 && count < 100)
 						{
-							replaceString.replace(0, 2, "");
+							replaceString.replace(0, 3, "");
 							safety << replaceString << endl;
 						}
 
 						else
 						{
-							replaceString.replace(0, 1, "");
+							replaceString.replace(0, 2, "");
 							safety << replaceString << endl;
 						}
 					}
@@ -206,6 +203,7 @@ void tasks::command(int argc, char* argv[])
 					ifstream existingTodo1;
 					existingTodo1.open("todo1.txt");
 					bool done = false;
+					bool newCheck = false;
 					int i = 0;
 
 					while (getline(existingTodo1, description)) //since the file exists I want to read everything from the todo1.txt file
@@ -221,17 +219,18 @@ void tasks::command(int argc, char* argv[])
 					// empty bracket before the content in the vector.
 					ofstream temp;
 					temp.open("todo1.txt");
-
+					int countme = 0;
 					for (iter = tasklists.begin(); iter != tasklists.end(); iter++) //this is how I go through the vector
 					{
 						//this is to make sure i print the new description before a marked task but at the end of all the 
 						//unmarked
-						if (tasklists.at(i)[1] == 'x' && done == false) //if the char is an 'x' AND if i have not already entered
-						{												//into statement within the same loop.
-							add(temp, argv); //I want to write the new description into the todo1.txt file
-							temp << *iter << endl; //then now I want to write the first [x] marked task in todo1.txt so i dont lose it
-							done = true; //so i dont enter the loop i'll set my done to true.
-						}
+					
+						 if (tasklists.at(i)[1] == 'x' && done == false) //if the char is an 'x' AND if i have not already entered
+							{												//into statement within the same loop.
+								add(temp, argv); //I want to write the new description into the todo1.txt file
+								temp << *iter << endl; //then now I want to write the first [x] marked task in todo1.txt so i dont lose it
+								done = true; //so i dont enter the loop i'll set my done to true.
+							}
 
 
 						else //if the char is a ' ' or done = true
@@ -501,7 +500,6 @@ void tasks::add(ofstream& file, char* argv[])
 
 	if (first == "-f")
 	{
-		cout << "in -f";
 		if (size > 5)
 		{
 			for (int i = 4; i < size; i++)
