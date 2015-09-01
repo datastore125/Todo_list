@@ -27,10 +27,38 @@ void tasks::command(int argc, char* argv[])
 /////ADD
 		if (first == "add")
 		{
+			ifstream checkMe;					//if todo.txt is open it means that there is already an existing file
+			checkMe.open("todo.txt");		//i do this check for the precautionary measures of the case where i may have
+			if (checkMe.is_open() || !checkMe.eof()) //another specified file using the same todo1.txt file.
+			{										//So if file exists then i want to copy everything in todo.txt into todo1.txt
+				ofstream replace;					//if not then i'll just go ahead an create a new todo1.txt file because
+				replace.open("todo1.txt");			//this means that todo.txt does not exist
+				string newText;
+				int count = 0;
+				while (getline(checkMe, newText))
+				{
+					count++;
+
+					if (count > 0 && count < 100)
+					{
+						newText.replace(0, 2, "");
+						replace << newText << endl;
+					}
+					
+					else
+					{
+						newText.replace(0, 1, "");
+						replace << newText << endl;
+					}
+				}
+			
+			}					
+			//file then i'll be reading from the same todo1.txt file and thats a no no
+			checkMe.close();	//so i need to create a copy of the todo.txt file.
 			string description;
 			ifstream hope;
 			hope.open("todo1.txt"); //todo1.txt is where i'll store/write all the tasks without the index number
-			if (!hope.eof() && hope.is_open()) //if the file exists then it'll open and enter into this statement
+			if (hope.is_open() && !hope.eof()) //if the file exists then it'll open and enter into this statement
 			{
 				bool done = false;
 				int i = 0;
@@ -142,18 +170,39 @@ void tasks::command(int argc, char* argv[])
 		{
 			second = argv[2];
 			third = argv[3];
+
 /////////////////////////////////////
 /////start of add
 			if (third == "add")
 			{
-				cout << "yes";
 				string description;
 				ifstream hope;
 				hope.open(second.c_str()); //my new file is where i'll use to check whether i'm reading everything
 				if (!hope.eof() && hope.is_open()) //if the file exists then it'll open and enter into this statement
 				{
+					string replaceString;
+					int count = 0;
+					ofstream safety;
+					safety.open("todo1.txt");
+					while (getline(hope, replaceString)) //i'm doint his check because there may be an instance where
+					{									//the specified file already exists but the todo1.txt file may
+						count++;						//have been modified
+						cout << "where am i?";
+						if (count > 0 && count < 100)
+						{
+							replaceString.replace(0, 2, "");
+							safety << replaceString << endl;
+						}
+
+						else
+						{
+							replaceString.replace(0, 1, "");
+							safety << replaceString << endl;
+						}
+					}
+					safety.close();
 					hope.close();
-					cout << "here";
+
 					ifstream existingTodo1;
 					existingTodo1.open("todo1.txt");
 					bool done = false;
@@ -208,7 +257,6 @@ void tasks::command(int argc, char* argv[])
 					newTemp.open("todo1.txt"); //create your first todo1.txt file.
 					add(newTemp, argv); //enter into add so that now the new task will be written in the todo1.txt file
 					newTemp.close(); //close todo1.txt
-					cout << "1";
 				}
 
 				//by this point i should have a completed todo1.txt file with all the tasks whether first or multiple entries
@@ -281,7 +329,7 @@ void tasks::command(int argc, char* argv[])
 				if (checkFile.is_open() && !checkFile.eof() && check == false)
 				{
 					check = true; //this means the specifiled file exists
-				}
+				}				//since it exists i can go ahead and read todo1.txt instead of creating a new one
 
 
 				int number = atoi(taskNumber.c_str());
@@ -289,7 +337,7 @@ void tasks::command(int argc, char* argv[])
 				lookIn.open("todo1.txt"); //i'm going to read in my todo1.txt file because it has all of my tasks
 				//write a check to ensure that this is not the first time the file was open
 
-				if ((lookIn.is_open() || lookIn.eof()) && check == true)
+				if ( lookIn.is_open() && check == true)
 				{
 					//***********************************
 					//enter into the function
@@ -424,11 +472,9 @@ void tasks::vectorTasks(vector<string>& temp1, ifstream& file, int Tnumber)
 	unsigned int counter = 0;
 	while (counter < tasklists.size()) //i'm going to search for the line to do through this loop
 	{
-		cout << "1";
 		counter++;
 		if (counter == Tnumber) //so when i open teh todo1.txt file i'll want to push everything into the vector EXCEPT
 		{
-			cout << "2";
 			tempLine = tasklists.at(Tnumber-1); //index starts from 0 so technically the spot would be tnumber - 1
 			tasklists.erase(tasklists.begin() + (counter - 1));
 		}
@@ -436,7 +482,6 @@ void tasks::vectorTasks(vector<string>& temp1, ifstream& file, int Tnumber)
 		//if it does equal the Tnumber then i can print the correct one into temp.txt
 		else
 		{
-			cout << "3";
 			//the line number specified by Tnumber. This ensures that my to do task is last in the list
 			temp4 << tasklists.at(counter-1); //i push everything into the vector besides the line of my tnumber;
 		}
